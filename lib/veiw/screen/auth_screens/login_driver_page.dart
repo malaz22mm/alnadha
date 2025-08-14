@@ -78,7 +78,9 @@ class LoginDriverPage extends StatelessWidget {
                 ),
                 CustomForgetPassword(
                   title: "Driver forgot password?",
-                  onPressedButton: () {},
+                  onPressedButton: () {
+                    Get.toNamed("/driverforgetpassword");
+                  },
                   buttonTitle: "Reset Password",
                 ),
                 controller.statusRequest == StatusRequest.failure

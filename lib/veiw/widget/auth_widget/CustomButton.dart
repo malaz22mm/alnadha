@@ -29,14 +29,16 @@ class CoustomButtom extends StatelessWidget {
           color: AppColors.darkbluecolor,
           borderRadius: BorderRadius.circular(25),
         ),
-        child: Text(
-          title,
+        child: Center(
+          child: Text(
+            title,
 
-          style: TextStyle(
-            color: Colors.white,
-            //height: 10.sp
+            style: TextStyle(
+              color: Colors.white,
+              //height: 10.sp
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
         ),
       ),
     );

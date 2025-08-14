@@ -3,16 +3,16 @@ import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../../../../controller/auth/forgetpassword/verifycodeforgetpassword.dart';
+import '../../../../controller/auth/Driverforgetpassword/verifycodeforgetpassword.dart';
 import '../../../../core/constant/colors.dart';
 
-class VerifycodeForgetPassword extends StatelessWidget {
-  const VerifycodeForgetPassword({super.key});
+class DriverVerifycodeForgetPassword extends StatelessWidget {
+  const DriverVerifycodeForgetPassword({super.key});
 
   @override
   Widget build(BuildContext context) {
-    VerifycodeForgetPasswordrControllerImp controller =
-    Get.put(VerifycodeForgetPasswordrControllerImp());
+    DriverVerifycodeForgetPasswordrControllerImp controller =
+    Get.put(DriverVerifycodeForgetPasswordrControllerImp());
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(

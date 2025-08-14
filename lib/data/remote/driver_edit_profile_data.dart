@@ -1,21 +1,22 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import '../../core/classes/crud.dart';
 import '../../core/classes/stutusconntection.dart';
 import '../../core/constant/staticdata.dart';
 
-class EditProfileData {
+class DriverEditProfileData {
   String baseUrl = StaticData().baseurl;
 
   Crud crud;
 
-  EditProfileData(this.crud);
+  DriverEditProfileData(this.crud);
 
   /// جلب بيانات البروفايل
   Future<Map<String, dynamic>> getProfile({required String token}) async {
     var response = await crud.getData(
-      linkurl: "${StaticData().baseurl}customer/profile",
+      linkurl: "${StaticData().baseurl}driver/profile",
       Token: token,
     );
 
@@ -24,6 +25,41 @@ class EditProfileData {
           (data) => data as Map<String, dynamic>,
     );
   }
+  ///جلب الصورة
+  // Future<Uint8List> getProfilePicture({required String token}) async {
+  //   var uri = Uri.parse("${StaticData().baseurl}driver/profile_picture");
+  //   var response = await http.get(
+  //     uri,
+  //     headers: {
+  //       "Authorization": "Bearer $token",
+  //       "Accept": "application/json",
+  //     },
+  //   );
+  //
+  //   if (response.statusCode == 200) {
+  //     return response.bodyBytes; // الصورة كـ Bytes
+  //   } else {
+  //     print("Error fetching profile picture: ${response.statusCode}");
+  //     throw Exception("Failed to load profile picture");
+  //   }
+  // }
+
+  Future<Uint8List> getProfilePicture({required String token}) async {
+    final response = await http.get(
+      Uri.parse("https://al-nadha-1.onrender.com/api/driver/profile_picture"),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Accept": "application/json",
+      },
+    );
+print(response);
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else {
+      throw Exception("Failed to load profile picture: ${response.statusCode}");
+    }
+  }
+
 
 
   /// تحديث بيانات البروفايل
@@ -38,7 +74,7 @@ class EditProfileData {
     };
 
     return await crud.putData(
-      linkurl: "${baseUrl}customer/updateProfile",
+      linkurl: "${baseUrl}driver/updateProfile",
       data: data,
       token: token,
     );
@@ -49,7 +85,7 @@ class EditProfileData {
     required String token,
     required File profileImage,
   }) async {
-    var uri = Uri.parse("${baseUrl}customer/profile_picture");
+    var uri = Uri.parse("${baseUrl}driver/profile_picture");
     var request = http.MultipartRequest("POST", uri);
 
     request.headers.addAll({

@@ -11,6 +11,10 @@ class AppRoute {
   static const String forgetpassword='/forgetpassword';
   static const String verifycodeforgetpasswors='/verifycodeforgetpasswors';
   static const String resetpassword='/resetpassword';
+  static const String driverforgetpassword='/driverforgetpassword';
+  static const String driververifycodeforgetpasswors='/driververifycodeforgetpasswors';
+  static const String driverresetpassword='/driverresetpassword';
+
 
 
   ////home
@@ -26,10 +30,11 @@ class AppRoute {
 static const String order='/orderpage';
 static const String driverorder='/driverHome';
 static const String createorder='/createorder';
+static const String editorder='/editorder';
 
-static const String edit='/edit';
+static const String drivereditprofile='/driveredit';
 static const String editprofile='/editprofile';
 
 static const String rating='/rating';
-static const String x='/x';
+static const String statistics='/statistics';
 }

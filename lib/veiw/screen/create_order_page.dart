@@ -56,6 +56,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
           key: _formKey,
           child: SingleChildScrollView(
             child: Card(
+              color:  AppColors.gray,
               elevation: 4,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               child: Padding(
@@ -184,7 +185,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                             final webhookUrl = Uri.parse("https://alnadha.app.n8n.cloud/webhook/neworder");
                             final response = await http.post(
                               webhookUrl,
-                              headers: {"Content-Type": "application/json"},
                               body: jsonEncode({
                                 "vehicle_types": _selectedVehicle!,
                                 "description": _descriptionController.text
@@ -193,6 +193,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
 
                             if (response.statusCode == 200) {
                               print("Webhook notification sent successfully ✅");
+                              print("Response: ${response.body}");
                             } else {
                               print("Failed to send webhook notification ❌: ${response.statusCode}, ${response.body}");
                             }

@@ -1,58 +1,37 @@
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../controller/rating_controller.dart';
+import '../../core/services/services.dart';
+import '../../data/remote/rating_data.dart';
 
-class CompletionScreen extends StatefulWidget {
-  const CompletionScreen({super.key});
 
-  @override
-  State<CompletionScreen> createState() => _CompletionScreenState();
-}
+class CompletionScreen extends StatelessWidget {
+  final int orderId;
+  CompletionScreen({super.key, required this.orderId});
 
-class _CompletionScreenState extends State<CompletionScreen> {
-  int _rating = 0;
-  final TextEditingController _noteController = TextEditingController();
-
-  @override
-  void dispose() {
-    _noteController.dispose();
-    super.dispose();
-  }
-
-  void _submit() {
-    // قم بحفظ التقييم والملاحظة أو إرسالها
-    print('Rating: $_rating');
-    print('Note: ${_noteController.text}');
-    Navigator.pop(context); // أو الانتقال إلى الشاشة التالية
-  }
-
-  Widget buildStar(int index) {
-    return IconButton(
-      onPressed: () {
-        setState(() {
-          _rating = index;
-        });
-      },
-      icon: Icon(
-        Icons.star,
-        color: index <= _rating ? Colors.amber : Colors.grey[400],
-        size: 32,
-      ),
-    );
-  }
+  final MyServices myServices = Get.find();
 
   @override
   Widget build(BuildContext context) {
+    String? token = myServices.pref.getString("token");
+print(token);
+print(orderId);
+    final controller = Get.put(
+      RatingController(
+        orderId: orderId,
+        data: RatingData(Get.find()),
+      ),
+    );
+
     return Scaffold(
       body: Stack(
         children: [
-          // خلفية
           Positioned.fill(
             child: Image.asset(
-              'assets/images/rate.jpg', // استبدلها بالصورة التي لديك
+              'assets/images/rate.jpg',
               fit: BoxFit.cover,
             ),
           ),
-          // محتوى الصفحة
           Positioned.fill(
             child: Container(
               color: Colors.black.withOpacity(0.4),
@@ -67,24 +46,37 @@ class _CompletionScreenState extends State<CompletionScreen> {
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   const Text(
                     'كيف كانت تجربتك؟',
                     style: TextStyle(color: Colors.white, fontSize: 20),
-                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 24),
+
                   // نجوم التقييم
-                  Row(
+                  Obx(() => Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(5, (index) => buildStar(index + 1)),
-                  ),
+                    children: List.generate(
+                      5,
+                          (index) => IconButton(
+                        onPressed: () =>
+                            controller.setRating(index + 1),
+                        icon: Icon(
+                          Icons.star,
+                          color: (index + 1) <= controller.rating.value
+                              ? Colors.amber
+                              : Colors.grey[400],
+                          size: 32,
+                        ),
+                      ),
+                    ),
+                  )),
                   const SizedBox(height: 24),
+
                   // حقل الملاحظات
                   TextField(
-                    controller: _noteController,
+                    onChanged: controller.setComment,
                     maxLines: 4,
                     decoration: InputDecoration(
                       hintText: 'اكتب ملاحظتك هنا...',
@@ -98,37 +90,44 @@ class _CompletionScreenState extends State<CompletionScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
+
                   // أزرار
-                  Row(
+                  Obx(() => Row(
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: _submit,
+                          onPressed: controller.isLoading.value
+                              ? null
+                              : controller.submitRating,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.amber,
                             foregroundColor: Colors.black,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding:
+                            const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
-                          child: const Text('إرسال'),
+                          child: controller.isLoading.value
+                              ? const CircularProgressIndicator(
+                              color: Colors.black)
+                              : const Text('إرسال'),
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
+                          onPressed: () => Get.back(),
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding:
+                            const EdgeInsets.symmetric(vertical: 16),
                           ),
                           child: const Text('تخطي'),
                         ),
                       ),
                     ],
-                  )
+                  ))
                 ],
               ),
             ),

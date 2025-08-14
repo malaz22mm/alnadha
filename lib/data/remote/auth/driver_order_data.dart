@@ -5,10 +5,17 @@ class DriverOrdersData {
   Crud crud;
 
   DriverOrdersData(this.crud);
-
+  Future<dynamic> rejectOrder({required int orderId, required String token}) async {
+    var response = await crud.postData(
+      linkurl: "${StaticData().baseurl}driver/rejecteOrder/$orderId",
+      token: token,
+        data: null
+    );
+    return response.fold((l) => l, (r) => r);
+  }
   Future getOrders({required String token}) async {
     var response = await crud.getData(
-      linkurl: "${StaticData().baseurl}driver/getOrder",
+      linkurl: "${StaticData().baseurl}driver/showOrder",
       Token: token,
     );
     return response.fold((l) => l, (r) => r);
@@ -24,10 +31,10 @@ class DriverOrdersData {
     );
 
     return response.fold(
-          (l) => {"status": false, "message": l.toString()},  // إذا حدث خطأ: نعيد خريطة بخطأ
-          (r) => Map<String, dynamic>.from(r),                // إذا نجح: نعيد Map بشكل صريح
+          (l) => {"status": false, "message": l.toString()},
+          (r) => Map<String, dynamic>.from(r),
     );
   }
 
-
 }
+

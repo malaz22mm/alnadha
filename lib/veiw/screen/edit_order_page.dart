@@ -1,90 +1,120 @@
+import 'package:alnadha/core/constant/staticdata.dart';
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
+import '../../controller/edit_order_controller.dart';
 import '../../core/constant/colors.dart';
+import '../../core/services/services.dart';
+import '../../data/remote/edit_order_data.dart';
 
-class EditOrderPage extends StatefulWidget {
+class EditOrderPage extends StatelessWidget {
   final Map<String, dynamic> order;
 
-  const EditOrderPage({super.key, required this.order});
-
-  @override
-  State<EditOrderPage> createState() => _EditOrderPageState();
-}
-
-class _EditOrderPageState extends State<EditOrderPage> {
-  late TextEditingController locationController;
-  String status = "";
-
-  @override
-  void initState() {
-    super.initState();
-    locationController = TextEditingController(text: widget.order['location']);
-    status = widget.order['status'];
-  }
-
-  @override
-  void dispose() {
-    locationController.dispose();
-    super.dispose();
-  }
+   EditOrderPage({Key? key, required this.order})
+      : super(key: key);
+  final MyServices myServices = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("تعديل الطلب #${widget.order['id']}"),
-          backgroundColor: AppColors.darkbluecolor,
+    String? token = myServices.pref.getString("token");
+    print("Token: $token");
+    final orderid = order['OrderID'];
+    final controller = Get.put(
+      EditOrderController(
+        order: order,
+        data: EditOrderData(
+          baseUrl: "${StaticData().baseurl}customer/update-order",
+          token:  token ?? "",
+
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("الموقع", style: TextStyle(fontSize: 16)),
-              const SizedBox(height: 8),
-              TextField(
-                controller: locationController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text("حالة الطلب", style: TextStyle(fontSize: 16)),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                value: status,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'بانتظار السائق', child: Text('بانتظار السائق')),
-                  DropdownMenuItem(value: 'قيد التوصيل', child: Text('قيد التوصيل')),
-                  DropdownMenuItem(value: 'تم التوصيل', child: Text('تم التوصيل')),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      status = value;
-                    });
-                  }
-                },
-              ),
-              const SizedBox(height: 30),
-              SizedBox(
+      ),
+    );
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text("تعديل الطلب"),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // صورة أعلى الصفحة
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                "assets/images/photo_2025-07-17_00-09-42.jpg",
+                height: 180,
                 width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.darkbluecolor),
-                  onPressed: () {
-                    // حفظ التعديلات (ممكن تخزينها في Firebase أو تعديل الـList لاحقًا)
-                    Navigator.pop(context);
-                  },
-                  child: const Text("حفظ التعديلات", style: TextStyle(fontSize: 16)),
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // اختيار نوع المركبة
+            DropdownButtonFormField<String>(
+              value: controller.selectedVehicle,
+              items: ['car', 'bike', 'truck']
+                  .map((v) => DropdownMenuItem(value: v, child: Text(v)))
+                  .toList(),
+              onChanged: (val) => controller.selectedVehicle = val,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "اختر نوع المركبة",
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // إدخال الوصف
+            TextFormField(
+              controller: controller.descriptionController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "تفاصيل الطلب",
+              ),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 20),
+
+            // زر الحفظ
+            Obx(
+                  () => SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : () => controller.saveOrder(),
+                  icon: const Icon(Icons.save, color: Colors.black),
+                  label: controller.isLoading.value
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text("حفظ التعديلات",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.darkbluecolor,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
                 ),
-              )
-            ],
-          ),
+              ),
+            ),
+            const SizedBox(height: 10),
+
+// زر الإلغاء
+            Obx(() => SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: controller.isLoading.value
+                    ? null
+                    : () => controller.deleteOrder(),
+                icon: const Icon(Icons.delete, color: Colors.white),
+                label: controller.isLoading.value
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text("إلغاء الطلب", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            )),
+          ],
         ),
       ),
     );

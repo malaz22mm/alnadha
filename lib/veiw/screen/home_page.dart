@@ -121,6 +121,7 @@ class MainContent extends StatelessWidget {
     required VoidCallback onPressed,
   }) {
     return Card(
+      color:  AppColors.gray,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
       child: Padding(

@@ -3,14 +3,14 @@ import 'package:get/get.dart';
 import '../../../core/classes/stutusconntection.dart';
 import '../../../core/constant/routing.dart';
 import '../../../core/services/services.dart';
-import '../../../data/remote/forget/resetpassworddata.dart';
+import '../../../data/remote/driverforget/resetpassworddata.dart';
 
-abstract class ResetPassword extends GetxController {
+abstract class DriverResetPassword extends GetxController {
   ResetEndPassword();
   checkInitialData();
 }
 
-class ResetPasswordControllerImp extends ResetPassword {
+class DriverResetPasswordControllerImp extends DriverResetPassword {
   TextEditingController newpassword = TextEditingController();
   TextEditingController confirmpassword = TextEditingController();
 
@@ -18,7 +18,7 @@ class ResetPasswordControllerImp extends ResetPassword {
   String? email;
   StatusRequest statusRequest = StatusRequest.none;
 
-  ResetPasswordData resetPasswordData = ResetPasswordData(Get.find());
+  DriverResetPasswordData resetPasswordData = DriverResetPasswordData(Get.find());
   MyServices myServices = Get.find();
 
   @override
@@ -44,7 +44,7 @@ class ResetPasswordControllerImp extends ResetPassword {
     if (code == null || email == null) {
       Get.snackbar("خطأ", "البيانات غير مكتملة");
       Future.delayed(Duration.zero, () {
-        Get.offAllNamed(AppRoute.forgetpassword);
+        Get.offAllNamed(AppRoute.driverforgetpassword);
       });
     }
   }
@@ -78,7 +78,7 @@ class ResetPasswordControllerImp extends ResetPassword {
       if (response is Map && response['status'] == "Success") {
         Get.snackbar("نجاح", "تمت إعادة تعيين كلمة المرور بنجاح",
             backgroundColor: Colors.green.shade300, colorText: Colors.white);
-        Get.offAllNamed(AppRoute.loginpage);
+        Get.offAllNamed(AppRoute.driverloginpage);
       } else {
         Get.snackbar("خطأ", response['message'] ?? "حدث خطأ",
             backgroundColor: Colors.red.shade200, colorText: Colors.white);

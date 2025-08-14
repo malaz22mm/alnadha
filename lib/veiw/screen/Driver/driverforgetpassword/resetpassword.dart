@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../../../controller/auth/forgetpassword/resetpassword.dart';
+import '../../../../controller/auth/Driverforgetpassword/resetpassword.dart';
 import '../../../../core/classes/handlingrequstveiw.dart';
 import '../../../../core/constant/colors.dart';
 import '../../../../core/functions/validetor.dart';
 import '../../../widget/auth_widget/custom_textform_auth.dart';
 
-class ResetPasswordScreen extends StatelessWidget {
-  const ResetPasswordScreen({super.key});
-
+class DriverResetPasswordScreen extends StatelessWidget {
+  const DriverResetPasswordScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    // Initialize controller without immediate navigation
-    final controller = Get.put(ResetPasswordControllerImp());
+    final controller = Get.put(DriverResetPasswordControllerImp());
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
@@ -24,7 +22,7 @@ class ResetPasswordScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontFamily: "Tejwal"),
         ),
       ),
-      body: GetBuilder<ResetPasswordControllerImp>(
+      body: GetBuilder<DriverResetPasswordControllerImp>(
         builder: (controller) {
           return HandlingDataRequest(
             statusRequest: controller.statusRequest,

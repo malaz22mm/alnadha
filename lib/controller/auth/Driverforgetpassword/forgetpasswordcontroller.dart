@@ -4,12 +4,12 @@ import '../../../core/classes/stutusconntection.dart';
 import '../../../core/constant/routing.dart';
 import '../../../core/functions/handingdatacontroller.dart';
 import '../../../core/services/services.dart';
-import '../../../data/remote/forget/forgetpassworddata.dart';
+import '../../../data/remote/driverforget/forgetpassworddata.dart';
 
-class ForgetPasswordControllerImp extends GetxController {
+class DriverForgetPasswordControllerImp extends GetxController {
   late TextEditingController email;
   StatusRequest statusRequest = StatusRequest.none;
-  ForgetPasswordData forgetPasswordData = ForgetPasswordData(Get.find());
+  DriverForgetPasswordData forgetPasswordData = DriverForgetPasswordData(Get.find());
   MyServices services = Get.find();
 
   @override
@@ -39,7 +39,7 @@ class ForgetPasswordControllerImp extends GetxController {
 
 
               services.pref.setString("reset_email", email.text);
-              Get.toNamed(AppRoute.verifycodeforgetpasswors);
+              Get.toNamed(AppRoute.driververifycodeforgetpasswors);
             } else {
               statusRequest = StatusRequest.failure;
               Get.defaultDialog(

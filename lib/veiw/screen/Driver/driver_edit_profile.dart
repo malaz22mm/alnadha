@@ -4,17 +4,17 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../controller/profile_controller.dart';
-import '../../core/constant/colors.dart';
+import '../../../controller/driver_edit_profile_controller.dart';
+import '../../../core/constant/colors.dart';
 
-class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+class DriverEditProfilePage extends StatefulWidget {
+  const DriverEditProfilePage({super.key});
 
   @override
-  State<EditProfilePage> createState() => _EditProfilePageState();
+  State<DriverEditProfilePage> createState() => _EditProfilePageState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
+class _EditProfilePageState extends State<DriverEditProfilePage> {
   File? _profileImage;
 
   final profileController = Get.put(ProfileController());
@@ -24,9 +24,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.initState();
     profileController.fetchProfile().then((_) {
       profileController.fullNameController.text =
-          profileController.profileData['fullName'] ?? '';
+          profileController.profileData['FullName'] ?? '';
       profileController.phoneController.text =
-          profileController.profileData['phone'] ?? '';
+          profileController.profileData['Phone'] ?? '';
     });
   }
 
@@ -67,7 +67,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     final status = await permission.request();
     if (status.isGranted) {
-      final picked = await ImagePicker().pickImage(source: source);
+      final picked = await ImagePicker().pickImage(
+        source: source,
+        imageQuality: 85,
+      );
       if (picked != null) {
         setState(() {
           _profileImage = File(picked.path);
@@ -124,10 +127,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     radius: 60,
                     backgroundColor: Colors.white,
                     backgroundImage: _profileImage != null
-                        ? FileImage(_profileImage!)
-                        : const AssetImage('assets/images/logo1.png')
-                    as ImageProvider,
+                        ? FileImage(_profileImage!) // صورة من الجهاز
+                        : (profileController.profileImageBytes.value != null
+                        ? MemoryImage(profileController.profileImageBytes.value!) // صورة من السيرفر
+                        : const AssetImage('assets/images/logo1.png') // صورة افتراضية
+                    ) as ImageProvider,
                   ),
+
                   TextButton(
                     onPressed: _pickImage,
                     child: const Text(
@@ -163,29 +169,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16), // مسافة بين الزرين
-                  ElevatedButton(
-                    onPressed: () {
-                      // مسح البيانات والتوكن
-                      profileController.myServices.pref.clear();
-                      // الانتقال لشاشة تسجيل الدخول
-                      Get.offAllNamed("/login");
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'تسجيل خروج',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

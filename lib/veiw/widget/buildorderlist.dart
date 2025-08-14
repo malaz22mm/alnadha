@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../core/constant/colors.dart';
 import '../screen/edit_order_page.dart';
 
@@ -44,7 +45,7 @@ Widget buildOrderList(String status, List<Map<String, dynamic>> allOrders) {
 
         },
         child: Card(
-
+          color:  AppColors.gray,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           margin: const EdgeInsets.only(bottom: 16),
           elevation: 3,
@@ -59,8 +60,27 @@ Widget buildOrderList(String status, List<Map<String, dynamic>> allOrders) {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("طلب #${order['OrderID'] ?? ''}",
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
+                      Row(
+                        children: [
+                          Text("طلب #${order['OrderID'] ?? ''}",
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        if (order['Status'] == 'pending')  IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () {
+                                Get.to(EditOrderPage(order: order));
+                              }
+                          ),
+                          if (order['Status'] == 'delivered')
+                            IconButton(
+                              icon: const Icon(Icons.star_rate, color: Colors.amber),
+                              onPressed: () {
+                                Get.toNamed('/rating', arguments: order['OrderID']);
+                              },
+                            ),
+                        ],
+                      ),
+
                       const SizedBox(height: 8),
                       Text("التفاصيل: ${order['Description'] ?? 'غير محدد'}", style: const TextStyle(fontSize: 16)),
 

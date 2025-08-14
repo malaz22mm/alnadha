@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../controller/auth/forgetpassword/forgetpasswordcontroller.dart';
+import '../../../../controller/auth/Driverforgetpassword/forgetpasswordcontroller.dart';
 import '../../../../core/classes/handlingrequstveiw.dart';
 import '../../../../core/constant/colors.dart';
 import '../../../../core/functions/validetor.dart';
@@ -10,13 +10,13 @@ import '../../../widget/auth_widget/custom_textform_auth.dart';
 
 
 
-class ForgetPassword extends StatelessWidget {
-  const ForgetPassword({super.key});
+class DriverForgetPassword extends StatelessWidget {
+  const DriverForgetPassword({super.key});
 
   @override
   Widget build(BuildContext context) {
-    ForgetPasswordControllerImp controllerImp =
-        Get.put(ForgetPasswordControllerImp());
+    DriverForgetPasswordControllerImp controllerImp =
+        Get.put(DriverForgetPasswordControllerImp());
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -31,7 +31,7 @@ class ForgetPassword extends StatelessWidget {
           ),
         ),
         ),
-      body:GetBuilder<ForgetPasswordControllerImp>(builder: (controllerImp){
+      body:GetBuilder<DriverForgetPasswordControllerImp>(builder: (controllerImp){
         return HandlingDataRequest(statusRequest: controllerImp.statusRequest, widget:  Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(

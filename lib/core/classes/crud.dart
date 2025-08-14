@@ -6,12 +6,17 @@ import '../functions/checkinternet.dart';
 
 class Crud {
   Future<Either<StatusRequest, Map>> postData(
-      {required String linkurl, data,token}) async {
-    Map<String, String> headers = {
+      {required String linkurl, data,token,header}) async {
+    Map<String, String> headers;
+    if (header != null) {
+       headers = header;
+    }
+    else{
+     headers = {
       "Accept": "application/json",
       "Content-Type": "application/x-www-form-urlencoded",
       "Accept-Language": "en",
-    };
+    };}
    if (token != null) {
       headers.addAll({"Authorization": "Bearer $token"});
    }
@@ -79,4 +84,43 @@ class Crud {
       return const Left(StatusRequest.offlinefailure);
     }
   }
+
+
+  Future<Either<StatusRequest, Map<String, dynamic>>> putData({
+    required String linkurl,
+    required Map<String, String> data,
+    String? token,
+    Map<String, String>? header,
+  }) async {
+    Map<String, String> headers;
+    if (header != null) {
+      headers = header;
+    } else {
+      headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept-Language": "en",
+      };
+    }
+    if (token != null) {
+      headers.addAll({"Authorization": "Bearer $token"});
+    }
+    if (await checkInternet()) {
+      var response = await http.put(
+        Uri.parse(linkurl),
+        headers: headers,
+        body: data,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var responsebody = jsonDecode(response.body);
+        return Right(responsebody);
+      } else {
+        return const Left(StatusRequest.serverfailure);
+      }
+    } else {
+      return const Left(StatusRequest.offlinefailure);
+    }
+  }
+
 }
