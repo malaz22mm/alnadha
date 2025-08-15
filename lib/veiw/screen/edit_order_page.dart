@@ -54,7 +54,7 @@ class EditOrderPage extends StatelessWidget {
             // اختيار نوع المركبة
             DropdownButtonFormField<String>(
               value: controller.selectedVehicle,
-              items: ['car', 'bike', 'truck']
+              items: ['car', 'motorcycle', 'truck','bicycle']
                   .map((v) => DropdownMenuItem(value: v, child: Text(v)))
                   .toList(),
               onChanged: (val) => controller.selectedVehicle = val,

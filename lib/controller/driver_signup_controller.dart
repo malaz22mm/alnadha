@@ -72,7 +72,19 @@ class DriverSignupController extends GetxController {
       update();
 
       if (statusRequest == StatusRequest.seccuss) {
+        Map<String, dynamic> data = response['data'];
+        Map<String, dynamic> user = data['user'];
+        String token = data['token'];
+        services.pref.setString("driver_token", token);
+        services.pref.setString("driver_name", user['FullName'] ?? "");
+        services.pref.setString("driver_email", user['Email'] ?? "");
+        services.pref.setString("driver_phone", user['Phone'] ?? "");
+        services.pref.setString("driver_cartype", user['CarType'] ?? "");
+        services.pref.setString("driver_carnumber", user['CarNumber'].toString());
+        services.pref.setString("driver_profilepic", user['ProfilePicture'] ?? "");
+
         Get.toNamed(AppRoute.driverorder);
+
       } else if (response == StatusRequest.serverfailure) {
         Get.defaultDialog(
           title: "تحذير",

@@ -52,16 +52,16 @@ class LoginController extends GetxController {
     update();
 
     if (statusRequest == StatusRequest.seccuss) {
-      // ✅ استخراج التوكين
-      String token = response['data']['token'];
-     //save token in shared preferences
-      services.pref.setString("token", token);
 
-      // ✅ التنقل مع التوكين إلى صفحة إنشاء الطلب
+      String token = response['data']['token'];
+
+      services.pref.setString("token", token);
+      services.pref.setString("login", "1");
       Get.toNamed(AppRoute.homepage, arguments: {
         'token': token,
       });
     }
+
 
     if (response == StatusRequest.serverfailure) {
       Get.defaultDialog(

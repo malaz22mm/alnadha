@@ -76,18 +76,32 @@ class DriverSignupPage extends StatelessWidget {
                       ),
 
                       SizedBox(height: 10.h),
-
-                      // نوع السيارة
-                      CustomTextFormAuth(
-                        hinttext: "Car Type",
-                        mycontroller: controller.type,
-                        valid: (val) {
-                          return validInput("type", 2, 30, val!);
+// نوع السيارة
+                      DropdownButtonFormField<String>(
+                        value: controller.type.text.isNotEmpty ? controller.type.text : null,
+                        decoration: InputDecoration(
+                          hintText: "Car Type",
+                          prefixIcon: const Icon(Icons.directions_car),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: "car", child: Text("Car")),
+                          DropdownMenuItem(value: "truck", child: Text("Truck")),
+                          DropdownMenuItem(value: "motorcycle", child: Text("Motorcycle")),
+                          DropdownMenuItem(value: "bicycle", child: Text("Bicycle")),
+                        ],
+                        onChanged: (value) {
+                          controller.type.text = value ?? '';
                         },
-                        isNumber: false,
-                        icons: const Icon(Icons.directions_car),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please select a vehicle type";
+                          }
+                          return null;
+                        },
                       ),
-
                       SizedBox(height: 10.h),
 
                       // رقم السيارة

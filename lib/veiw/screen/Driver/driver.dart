@@ -231,7 +231,7 @@ class DriverHome extends StatelessWidget {
                                         Icons.person,
                                         order['user']?['fullName'] ??
                                             ''),
-                                    buildInfoRow(Icons.phone,
+                                    buildInfoRow(Icons.monetization_on,
                                         order['user']?['phone'] ?? ''),
                                     Row(
                                       children: [

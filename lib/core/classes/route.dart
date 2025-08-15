@@ -49,6 +49,6 @@ class Routers {
     GetPage(name: AppRoute.driverforgetpassword, page: ()=>const DriverForgetPassword()),
     GetPage(name: AppRoute.driververifycodeforgetpasswors, page: ()=>const DriverVerifycodeForgetPassword()),
     GetPage(name: AppRoute.driverresetpassword, page: ()=>const DriverResetPasswordScreen()),
-      // GetPage(name: '/', page: ()=>const VerifycodeForgetPassword())
+      // GetPage(name: '/', page: ()=>const HomePage())
   ];
 }

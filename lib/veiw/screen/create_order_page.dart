@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:alnadha/core/constant/colors.dart';
 import '../../controller/creat_order_controller.dart';
+import '../../core/constant/routing.dart';
 import 'map.dart';
 class CreateOrderPage extends StatefulWidget {
   const CreateOrderPage({Key? key}) : super(key: key);
@@ -66,7 +67,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                     DropdownButtonFormField<String>(
                       value: _selectedVehicle,
                       hint: const Text("اختر نوع المركبة"),
-                      items: ['car', 'bike', 'truck']
+                      items: ['car', 'motorcycle', 'truck','bicycle']
                           .map((v) => DropdownMenuItem(value: v, child: Text(v)))
                           .toList(),
                       onChanged: (val) => setState(() => _selectedVehicle = val),
@@ -181,22 +182,23 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
 
                             Get.snackbar("نجاح", "تم إرسال الطلب بنجاح", snackPosition: SnackPosition.BOTTOM);
                             print("Order created successfully");
+                            Get.toNamed(AppRoute.order);
 
-                            final webhookUrl = Uri.parse("https://alnadha.app.n8n.cloud/webhook/neworder");
-                            final response = await http.post(
-                              webhookUrl,
-                              body: jsonEncode({
-                                "vehicle_types": _selectedVehicle!,
-                                "description": _descriptionController.text
-                              }),
-                            );
-
-                            if (response.statusCode == 200) {
-                              print("Webhook notification sent successfully ✅");
-                              print("Response: ${response.body}");
-                            } else {
-                              print("Failed to send webhook notification ❌: ${response.statusCode}, ${response.body}");
-                            }
+                            // final webhookUrl = Uri.parse("https://alnadha.app.n8n.cloud/webhook/neworder");
+                            // final response = await http.post(
+                            //   webhookUrl,
+                            //   body: jsonEncode({
+                            //     "vehicle_types": _selectedVehicle!,
+                            //     "description": _descriptionController.text
+                            //   }),
+                            // );
+                            //
+                            // if (response.statusCode == 200) {
+                            //   print("Webhook notification sent successfully ✅");
+                            //   print("Response: ${response.body}");
+                            // } else {
+                            //   print("Failed to send webhook notification ❌: ${response.statusCode}, ${response.body}");
+                            // }
 
                           } catch (e) {
                             Get.snackbar("خطأ", "فشل في إرسال الطلب: $e", snackPosition: SnackPosition.BOTTOM);

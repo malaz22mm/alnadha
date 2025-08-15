@@ -109,6 +109,18 @@ Widget buildOrderList(String status, List<Map<String, dynamic>> allOrders) {
 
                         ],
                       ),
+                      Row(
+                        children: [
+
+                          Icon(Icons.price_change, size: 25, color: order['color']),
+                          const SizedBox(width: 8),
+                          Text(
+                            "السعر: ${order['Cost'] ?? 'غير معروفة'}",
+                            style: TextStyle(fontSize: 16, color: order['color'] ?? Colors.grey),
+                          ),
+
+                        ],
+                      ),
 
                     ],
 

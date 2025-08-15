@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -54,6 +55,10 @@ class DriverVerifycodeForgetPassword extends StatelessWidget {
 
           // إدخال الرمز
           OtpTextField(
+            keyboardType: TextInputType.text,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+            ],
             borderRadius: BorderRadius.circular(15),
             numberOfFields: 6,
             borderColor: const Color(0xFF512DA8),

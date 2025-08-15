@@ -58,7 +58,13 @@ class SignupController extends GetxController {
       update();
       print(statusRequest);
       if (statusRequest == StatusRequest.seccuss) {
-        Get.toNamed(AppRoute.mainloginpage);
+
+        String token = response['data']['token'];
+
+        services.pref.setString("token", token);
+
+        Get.toNamed(AppRoute.homepage);
+
       }
       if (response == StatusRequest.serverfailure) {
         Get.defaultDialog(
@@ -72,7 +78,7 @@ class SignupController extends GetxController {
     else {
       (
     Get.defaultDialog(
-      title: "worning",
+      title: "warning",
       content: const Text("password and confirm password not correct")
     )
     );
