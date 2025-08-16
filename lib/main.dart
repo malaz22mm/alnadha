@@ -10,7 +10,9 @@ void main()async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(Crud());
   await Get.putAsync(() => MyServices().init());
-  runApp(const MyApp());
+
+
+  runApp( const MyApp());
 }
 
 class MyApp extends StatelessWidget {

@@ -32,23 +32,29 @@ class SplashController extends GetxController with SingleGetTickerProviderMixin 
   }
 
   void goToHomeView() {
-    Future.delayed(const Duration(seconds: 3), () async{
-      // final MyServices myServices = Get.find();
-      // String? token = myServices.pref.getString("token");
-      // String? driver_token = myServices.pref.getString('driver_token');
-      // if (token != null && token.isNotEmpty) {
-      //   // التوكين موجود → الصفحة الرئيسية
-      //   Get.offAllNamed('/homepage');
-      // }
-      // else if(driver_token != null && driver_token.isNotEmpty){
-      //   Get.offAllNamed(AppRoute.driverorder);
-      // }
-      // else {
-        // لا يوجد توكين → صفحة تسجيل الدخول
+    Future.delayed(const Duration(seconds: 3), () async {
+      final MyServices myServices = Get.find();
+
+      String? token = myServices.pref.getString("token");
+      print(token);
+      String? driverToken = myServices.pref.getString("driver_token");
+      print(driverToken);
+
+      if (driverToken != null && driverToken.isNotEmpty) {
+        // إذا كان السائق مسجل دخول
+        Get.offAllNamed(AppRoute.driverorder);
+      }
+      else if (token != null && token.isNotEmpty) {
+        // إذا كان المستخدم مسجل دخول
+        Get.offAllNamed(AppRoute.homepage);
+      }
+      else {
+        // لا يوجد أي جلسة → صفحة الـ Onboarding
         Get.toNamed(AppRoute.onbording);
-      // }
+      }
     });
   }
+
 
   @override
   void onClose() {

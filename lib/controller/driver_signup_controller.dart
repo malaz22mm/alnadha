@@ -83,12 +83,12 @@ class DriverSignupController extends GetxController {
         services.pref.setString("driver_carnumber", user['CarNumber'].toString());
         services.pref.setString("driver_profilepic", user['ProfilePicture'] ?? "");
 
-        Get.toNamed(AppRoute.driverorder);
+        Get.offAllNamed(AppRoute.driverorder);
 
       } else if (response == StatusRequest.serverfailure) {
         Get.defaultDialog(
           title: "تحذير",
-          middleText: "البريد الالكتروني مكرر سابقاً",
+          middleText: "${response.message} البريد الالكتروني مكرر سابقاً",
         );
         statusRequest = StatusRequest.failure;
         update();

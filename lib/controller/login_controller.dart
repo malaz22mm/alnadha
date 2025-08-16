@@ -57,7 +57,7 @@ class LoginController extends GetxController {
 
       services.pref.setString("token", token);
       services.pref.setString("login", "1");
-      Get.toNamed(AppRoute.homepage, arguments: {
+      Get.offAllNamed(AppRoute.homepage, arguments: {
         'token': token,
       });
     }

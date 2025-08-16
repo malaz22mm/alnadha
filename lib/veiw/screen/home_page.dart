@@ -5,6 +5,7 @@ import 'package:alnadha/veiw/screen/show_order.dart';
 
 import '../../core/constant/colors.dart';
 import '../../core/constant/routing.dart';
+import '../../core/services/services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,9 +23,16 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    token = Get.arguments['token'];
+    final MyServices myServices = Get.find();
+
+    // قراءة التوكين: أولًا من arguments، إذا null خذ من SharedPreferences
+    token = Get.arguments != null && Get.arguments['token'] != null
+        ? Get.arguments['token']
+        : myServices.pref.getString("token") ?? '';
+
     print('📦 Token received: $token');
   }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages =  [

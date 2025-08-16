@@ -62,7 +62,7 @@ class DriverLoginController extends GetxController {
       services.pref.setString("driver_carnumber", user['CarNumber'].toString());
       services.pref.setString("driver_profilepic", user['ProfilePicture'] ?? "");
 
-      Get.toNamed(AppRoute.driverorder);
+      Get.offAllNamed(AppRoute.driverorder);
 
 
 

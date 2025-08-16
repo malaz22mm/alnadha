@@ -63,7 +63,7 @@ class SignupController extends GetxController {
 
         services.pref.setString("token", token);
 
-        Get.toNamed(AppRoute.homepage);
+        Get.offAllNamed(AppRoute.homepage);
 
       }
       if (response == StatusRequest.serverfailure) {

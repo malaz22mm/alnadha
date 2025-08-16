@@ -115,7 +115,7 @@ class DriverHome extends StatelessWidget {
                         services.pref.remove("driver_token");
                         services.pref.remove("driver_name");
                         services.pref.remove("driver_id");
-                        Get.offAllNamed("/login");
+                        Get.offAllNamed(AppRoute.mainloginpage);
                       },
                     ),
                   ],
