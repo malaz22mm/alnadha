@@ -17,7 +17,7 @@ class MainLoginScreen extends StatelessWidget {
       bottomNavigationBar: Container(
         padding:const  EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         child: const Text(
-          "Data rights reserved to Malaz Solieman",
+          "Data rights reserved to ",
           style: TextStyle(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
