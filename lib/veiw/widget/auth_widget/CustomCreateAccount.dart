@@ -3,12 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constant/colors.dart';
 
-class CustomForgetPassword extends StatelessWidget {
+class CustomCreateAccount extends StatelessWidget {
   final String title;
   final String buttonTitle;
   final void Function() onPressedButton;
 
-  const CustomForgetPassword({
+  const CustomCreateAccount({
     super.key,
     required this.title,
     required this.buttonTitle,
@@ -23,12 +23,12 @@ class CustomForgetPassword extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            fontSize: 14.sp,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w500,
             color: AppColors.black,
           ),
         ),
-        SizedBox(height: 6.h),
+        SizedBox(height: 8.h),
         TextButton.icon(
           onPressed: onPressedButton,
           style: TextButton.styleFrom(
@@ -36,19 +36,19 @@ class CustomForgetPassword extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.r),
             ),
-            backgroundColor: Colors.blue.withOpacity(0.1),
+            backgroundColor: Colors.green.withOpacity(0.1),
           ),
           icon: const Icon(
-            Icons.lock_reset,
-            color: Colors.blue,
+            Icons.person_add,
+            color: Colors.green,
             size: 20,
           ),
           label: Text(
             buttonTitle,
             style: TextStyle(
-              color: Colors.blue,
+              color: Colors.green,
               fontWeight: FontWeight.bold,
-              fontSize: 13.sp,
+              fontSize: 16.sp,
             ),
           ),
         ),

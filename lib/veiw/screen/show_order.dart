@@ -42,11 +42,51 @@ class _OrdersPageState extends State<OrdersPage> with SingleTickerProviderStateM
           backgroundColor: Colors.white,
           bottom: TabBar(
             controller: _tabController,
-            tabs: const [
-              Tab(text: 'بانتظار السائق'),   // <-- pending
-              Tab(text: 'قيد التوصيل'),     // <-- accepted
-              Tab(text: 'تم التوصيل'),      // <-- delivered
+            tabs: [
+              Tab(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    CircleAvatar(
+                      radius: 10,
+                      backgroundColor: Colors.blue,
+                      child: Text("1", style: TextStyle(color: Colors.white, fontSize: 12)),
+                    ),
+                    SizedBox(width: 6),
+                    Text('بانتظار السائق'),
+                  ],
+                ),
+              ),
+              Tab(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    CircleAvatar(
+                      radius: 10,
+                      backgroundColor: Colors.blue,
+                      child: Text("2", style: TextStyle(color: Colors.white, fontSize: 12)),
+                    ),
+                    SizedBox(width: 6),
+                    Text('قيد التوصيل'),
+                  ],
+                ),
+              ),
+              Tab(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    CircleAvatar(
+                      radius: 10,
+                      backgroundColor: Colors.blue,
+                      child: Text("3", style: TextStyle(color: Colors.white, fontSize: 12)),
+                    ),
+                    SizedBox(width: 6),
+                    Text('تم التوصيل'),
+                  ],
+                ),
+              ),
             ],
+
           ),
 
         ),

@@ -9,6 +9,7 @@ import 'package:alnadha/veiw/widget/auth_widget/custom_curve_clipper.dart';
 import '../../../core/classes/handlingrequstveiw.dart';
 import '../../../core/classes/stutusconntection.dart';
 import '../../../core/functions/validetor.dart';
+import '../../widget/auth_widget/CustomCreateAccount.dart';
 import '../../widget/auth_widget/custom_elevetedButton_auth.dart';
 import '../../widget/auth_widget/custom_textform_auth.dart';
 import '../../widget/auth_widget/forgetpassword_button.dart';
@@ -69,7 +70,7 @@ class LoginDriverPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                CustomForgetPassword(
+                CustomCreateAccount(
                   title: "Driver don't have Account?",
                   onPressedButton: () {
                     Get.toNamed("/driversignup");

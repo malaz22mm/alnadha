@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core/constant/colors.dart';
+import '../../core/constant/staticdata.dart';
 import '../screen/edit_order_page.dart';
 
 Widget buildOrderList(String status, List<Map<String, dynamic>> allOrders) {
@@ -12,7 +13,6 @@ Widget buildOrderList(String status, List<Map<String, dynamic>> allOrders) {
   if (filteredOrders.isEmpty) {
     return const Center(child: Text("لا يوجد طلبات في هذه الحالة"));
   }
-
   return ListView.builder(
 
     padding: const EdgeInsets.all(16),
@@ -78,6 +78,21 @@ Widget buildOrderList(String status, List<Map<String, dynamic>> allOrders) {
                                 Get.toNamed('/rating', arguments: order['OrderID']);
                               },
                             ),
+                          if (order['Status'] == 'accepted')
+                            IconButton(
+                              icon:  Icon(Icons.location_on, color: Colors.blue),
+                              onPressed: () {
+                                final staticData = StaticData();
+                                Get.toNamed(
+                                  '/tracking',
+                                  arguments: {
+                                    'orderId': order['OrderID'].toString(),
+                                    'authUrl': '${staticData.baseurl}broadcasting/auth',
+                                  },
+                                );
+                              },
+                            ),
+
                         ],
                       ),
 

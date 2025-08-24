@@ -3,7 +3,7 @@ import '../data/remote/create_order_data.dart';
 
 class CreateOrderController extends GetxController {
   late OrderData orderData;
-  String? token; // اجلبها من صفحة تسجيل الدخول
+  String? token;
 
   @override
   void onInit() {

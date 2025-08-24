@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -13,12 +15,12 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   LatLng? _startLocation;
   LatLng? _destination;
+  String? _startAddress;
+  String? _destinationAddress;
+
   final MapController _mapController = MapController();
-  bool _usedCurrentLocation = false;
-  bool _editingStart = true; // بشكل افتراضي نحرر موقع الانطلاق
+  bool _editingStart = true;
 
-
-  // حمص: الموقع الافتراضي
   LatLng _homsCenter = LatLng(34.7304, 36.7094);
 
   Future<void> _getCurrentLocation() async {
@@ -28,6 +30,7 @@ class _MapScreenState extends State<MapScreen> {
       return;
     }
 
+
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -36,25 +39,53 @@ class _MapScreenState extends State<MapScreen> {
 
     Position position = await Geolocator.getCurrentPosition();
     LatLng current = LatLng(position.latitude, position.longitude);
-    setState(() {
-      _startLocation = current;
-      _usedCurrentLocation = true; // المستخدم استخدم الزر
-    });
+    await _setStart(current);
     _mapController.move(current, 15);
   }
 
+  Future<String> _getAddressFromLatLng(LatLng latLng) async {
+    final url = Uri.parse(
+        "https://nominatim.openstreetmap.org/reverse?lat=${latLng.latitude}&lon=${latLng.longitude}&format=json&accept-language=ar");
+    try {
+      final response = await http.get(url, headers: {
+        'User-Agent': 'flutter_map_demo'
+      });
 
-  void _onTapMap(TapPosition tapPosition, LatLng latlng) {
-    setState(() {
-      if (_editingStart) {
-        _startLocation = latlng;
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['display_name'] ?? "عنوان غير معروف";
       } else {
-        _destination = latlng;
+        return "خطأ: ${response.statusCode}";
       }
-    });
+    } catch (e) {
+      return "فشل في جلب العنوان";
+    }
   }
 
+  Future<void> _setStart(LatLng latLng) async {
+    _startLocation = latLng;
+    _startAddress = await _getAddressFromLatLng(latLng);
+    setState(() {});
+  }
 
+  Future<void> _setDestination(LatLng latLng) async {
+    _destination = latLng;
+    _destinationAddress = await _getAddressFromLatLng(latLng);
+    setState(() {});
+  }
+
+  void _onTapMap(TapPosition tapPosition, LatLng latlng) {
+    if (_editingStart) {
+      _setStart(latlng);
+    } else {
+      _setDestination(latlng);
+    }
+  }
+  LatLng _offsetPoint(LatLng from, LatLng to, double distanceInMeters) {
+    final Distance distance = const Distance();
+    final bearing = distance.bearing(from, to); // زاوية الاتجاه
+    return distance.offset(from, distanceInMeters, bearing);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +97,7 @@ class _MapScreenState extends State<MapScreen> {
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // الخريطة تغطي كامل الشاشة
+          // الخريطة
           Positioned.fill(
             child: FlutterMap(
               mapController: _mapController,
@@ -84,99 +115,175 @@ class _MapScreenState extends State<MapScreen> {
                   markers: [
                     if (_startLocation != null)
                       Marker(
-                        width: 50,
-                        height: 50,
+                        width: 60,
+                        height: 60,
                         point: _startLocation!,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _editingStart = true;
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text(
-                                  'اضغط على الخريطة لتغيير موقع الانطلاق')),
-                            );
-                          },
-                          child: const Icon(
-                              Icons.my_location, color: Colors.green, size: 36),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.green,
+                                border: Border.all(color: Colors.white, width: 3),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              alignment: Alignment.center,
+                              child: const Text(
+                                "1",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     if (_destination != null)
                       Marker(
-                        width: 50,
-                        height: 50,
+                        width: 60,
+                        height: 60,
                         point: _destination!,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _editingStart = false;
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text(
-                                  'اضغط على الخريطة لتغيير الوجهة')),
-                            );
-                          },
-                          child: const Icon(
-                              Icons.location_on, color: Colors.red, size: 36),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.red,
+                                border: Border.all(color: Colors.white, width: 3),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              alignment: Alignment.center,
+                              child: const Text(
+                                "2",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+
+                          ],
                         ),
                       ),
                   ],
                 ),
+
                 if (_startLocation != null && _destination != null)
                   PolylineLayer(
                     polylines: [
                       Polyline(
-                        points: [_startLocation!, _destination!],
+                        points: [
+                          _offsetPoint(_startLocation!, _destination!, 30),   // يبدأ بعد 30 متر تقريبًا من مركز الدائرة
+                          _offsetPoint(_destination!, _startLocation!, 30),  // ينتهي قبل 30 متر من مركز الدائرة
+                        ],
                         strokeWidth: 4,
                         color: Colors.blue,
                       ),
                     ],
                   ),
+
               ],
             ),
           ),
 
-          // أزرار تحديد نوع النقطة
+          // أزرار اختيار الانطلاق/الوجهة
           Positioned(
-            top: MediaQuery
-                .of(context)
-                .padding
-                .top + 60,
+            top: MediaQuery.of(context).padding.top + 60,
             left: 16,
             right: 16,
-            child: Row(
+            child:Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _editingStart = true;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _editingStart ? Colors.green : Colors.grey,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _editingStart = true;
+                      });
+                    },
+                    icon: const Icon(Icons.flag, color: Colors.white),
+                    label: const Text(
+                      "تحديد الانطلاق",
+                      style: TextStyle(color:Colors.white,fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _editingStart ? Colors.green : Colors.grey[400],
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      elevation: 5,
+                    ),
                   ),
-                  child: const Text("تحديد الانطلاق"),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _editingStart = false;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: !_editingStart ? Colors.red : Colors.grey,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _editingStart = false;
+                      });
+                    },
+                    icon: const Icon(Icons.location_on, color: Colors.white),
+                    label: const Text(
+                      "تحديد الوجهة",
+                      style: TextStyle(color:Colors.white,fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: !_editingStart ? Colors.red : Colors.grey[400],
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      elevation: 5,
+                    ),
                   ),
-                  child: const Text("تحديد الوجهة"),
                 ),
               ],
             ),
+
           ),
 
-          // أزرار الأسفل
+          // 🟦 Container فوق يمين
+          if (_startLocation != null && _destination != null)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 120,
+              right: 16,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.6,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  "الانطلاق: ${_startAddress ?? "جاري التحميل..."}\n"
+                      "الوجهة: ${_destinationAddress ?? "جاري التحميل..."}",
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+            ),
+
+          // الأزرار أسفل
           Positioned(
             bottom: 20,
             left: 20,
@@ -191,51 +298,48 @@ class _MapScreenState extends State<MapScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFFD700),
                     foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 16),
+                    padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
                 const SizedBox(height: 10),
-                if (_startLocation != null && _destination != null)
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      "الانطلاق: ${_startLocation!.latitude.toStringAsFixed(
-                          5)}, ${_startLocation!.longitude.toStringAsFixed(
-                          5)}\n"
-                          "الوجهة: ${_destination!.latitude.toStringAsFixed(
-                          5)}, ${_destination!.longitude.toStringAsFixed(5)}",
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: () {
                     if (_startLocation != null && _destination != null) {
                       Navigator.pop(context, {
                         'pickup': _startLocation,
+                        'pickup_address': _startAddress,
                         'delivery': _destination,
+                        'delivery_address': _destinationAddress,
                       });
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('يرجى تحديد الانطلاق والوجهة')),
+                        const SnackBar(content: Text('يرجى تحديد الانطلاق والوجهة')),
                       );
                     }
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                  icon: const Icon(Icons.check_circle, size: 24, color: Colors.white),
+                  label: const Text(
+                    "تأكيد المسار 🚀",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
-                  child: const Text('تأكيد المواقع'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                    backgroundColor: Colors.blueAccent, // 🔵 أزرق أنيق
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 6,
+                    shadowColor: Colors.black.withOpacity(0.3),
+                  ),
                 ),
+
               ],
             ),
           ),

@@ -23,6 +23,7 @@ import '../../veiw/screen/home_page.dart';
 import '../../veiw/screen/main_login_screen.dart';
 import '../../veiw/screen/rating_screen.dart';
 import '../../veiw/screen/splash_view.dart';
+import '../../veiw/screen/tracking_view.dart';
 
 class Routers {
   List<GetPage<dynamic>>? routers = [
@@ -49,6 +50,8 @@ class Routers {
     GetPage(name: AppRoute.driverforgetpassword, page: ()=>const DriverForgetPassword()),
     GetPage(name: AppRoute.driververifycodeforgetpasswors, page: ()=>const DriverVerifycodeForgetPassword()),
     GetPage(name: AppRoute.driverresetpassword, page: ()=>const DriverResetPasswordScreen()),
+    GetPage(name: AppRoute.tracking, page: ()=> TrackingView(  orderId: Get.arguments['orderId'],
+      authUrl: Get.arguments['authUrl'],))
       // GetPage(name: '/', page: ()=>const HomePage())
   ];
 }

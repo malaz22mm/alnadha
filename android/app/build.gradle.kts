@@ -39,6 +39,14 @@ android {
     }
 }
 
+dependencies {
+    // أضف هذه dependency لحل مشكلة SLF4J - الصيغة الصحيحة لـ Kotlin DSL
+    implementation("org.slf4j:slf4j-android:1.7.36")
+    implementation("com.pusher:pusher-java-client:2.4.4") {
+        exclude(group = "org.slf4j", module = "slf4j-api")
+    }
+}
+
 flutter {
     source = "../.."
 }

@@ -14,6 +14,7 @@ class AppRoute {
   static const String driverforgetpassword='/driverforgetpassword';
   static const String driververifycodeforgetpasswors='/driververifycodeforgetpasswors';
   static const String driverresetpassword='/driverresetpassword';
+  static const String tracking='/tracking';
 
 
 

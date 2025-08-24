@@ -40,10 +40,10 @@ class MainLoginScreen extends StatelessWidget {
               const Text(
                 "What did you need?",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 25, color: Colors.white),
+                style: TextStyle(fontSize: 23, color: Colors.black),
               ),
               SizedBox(
-                height: 20.h,
+                height: 15.h,
               ),
               CustomLoginButtom(
                 title: "Log in",
