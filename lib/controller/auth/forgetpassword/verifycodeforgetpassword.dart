@@ -8,7 +8,7 @@ abstract class VerifycodeForgetPasswordController extends GetxController {
 
 class VerifycodeForgetPasswordrControllerImp
     extends VerifycodeForgetPasswordController {
-  String? verifyCode; // لحفظ الكود الذي أدخله المستخدم
+  String? verifyCode;
   StatusRequest statusRequest = StatusRequest.none;
 
   @override

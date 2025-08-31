@@ -20,7 +20,7 @@ class DriverTrackingController extends GetxController {
   late StreamSubscription<Position> positionStream;
 
   int orderId = 0;
-  bool hasPickupDelivery = false; // عشان نعرف إذا جبنا الإحداثيات
+  bool hasPickupDelivery = false;
 
   @override
   void onInit() {
@@ -85,11 +85,13 @@ class DriverTrackingController extends GetxController {
         distanceFilter: 5,
       ),
     ).listen((Position position) async {
+      print("📍 الموقع الجديد: ${position.latitude}, ${position.longitude}");
       driverLocation = LatLng(position.latitude, position.longitude);
       update();
       await sendDriverLocation();
     });
   }
+
 
   Future<void> sendDriverLocation() async {
     String? token = services.pref.getString("driver_token");
@@ -101,6 +103,7 @@ class DriverTrackingController extends GetxController {
       longitude: driverLocation.longitude,
       token: token,
     );
+    print("📡 API response: $response");
 
     if (response["status"] == "Success") {
       // نجلب مواقع pickup و delivery أول مرة فقط

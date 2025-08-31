@@ -1,10 +1,9 @@
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:alnadha/core/constant/routing.dart';
 
 import '../../core/classes/stutusconntection.dart';
-import '../../core/functions/handingdatacontroller.dart';
 import '../../core/services/services.dart';
 import '../data/remote/auth/driver_signup_data.dart';
 
@@ -67,37 +66,40 @@ class DriverSignupController extends GetxController {
         vehicleNumber: vehicleNumber.text,
       );
 
-      print("=============================== Driver Controller $response");
-      statusRequest = handlingData(response);
-      update();
+      print("================ Driver Controller $response");
 
-      if (statusRequest == StatusRequest.seccuss) {
-        Map<String, dynamic> data = response['data'];
-        Map<String, dynamic> user = data['user'];
-        String token = data['token'];
+      if (response.isNotEmpty&&response['status']=="Success") {
+        statusRequest = StatusRequest.success;
+
+        Map<String, dynamic> user = response['data']['user'];
+        String token = response['data']['token'];
+
         services.pref.setString("driver_token", token);
         services.pref.setString("driver_name", user['FullName'] ?? "");
         services.pref.setString("driver_email", user['Email'] ?? "");
         services.pref.setString("driver_phone", user['Phone'] ?? "");
         services.pref.setString("driver_cartype", user['CarType'] ?? "");
-        services.pref.setString("driver_carnumber", user['CarNumber'].toString());
-        services.pref.setString("driver_profilepic", user['ProfilePicture'] ?? "");
+        services.pref.setString(
+            "driver_carnumber", user['CarNumber'].toString());
+        services.pref
+            .setString("driver_profilepic", user['ProfilePicture'] ?? "");
+
+        // نجاح → نعرض رسالة من الباك
+        Get.snackbar("نجاح", response["message"] ?? "تم إنشاء الحساب بنجاح",
+            backgroundColor: Colors.green, colorText: Colors.white);
 
         Get.offAllNamed(AppRoute.driverorder);
-
-      } else if (response == StatusRequest.serverfailure) {
-        Get.defaultDialog(
-          title: "تحذير",
-          middleText: "${response.message} البريد الالكتروني مكرر سابقاً",
-        );
+      } else {
+        // فشل → نعرض رسالة الباك مباشرة
         statusRequest = StatusRequest.failure;
-        update();
+        Get.snackbar("خطأ", response["message"] ?? "حدث خطأ ما",
+            backgroundColor: Colors.red, colorText: Colors.white);
       }
+
+      update();
     } else {
-      Get.defaultDialog(
-        title: "تحذير",
-        content: const Text("كلمة المرور وتأكيدها غير متطابقتين"),
-      );
+      Get.snackbar("تحذير", "كلمة المرور وتأكيدها غير متطابقتين",
+          backgroundColor: Colors.orange, colorText: Colors.white);
     }
   }
 }

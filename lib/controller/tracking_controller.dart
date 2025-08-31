@@ -20,9 +20,14 @@ class TrackingController extends GetxController {
     super.onClose();
   }
 
-  void startTracking(String orderId, String authUrl) {
+  void startTracking(String orderId, String authUrl, {LatLng? initialLocation}) {
     isLoading.value = true;
     errorMessage.value = '';
+
+    if (initialLocation != null) {
+      driverLocation.value = initialLocation;
+      isLoading.value = false;
+    }
 
     service.onLocationUpdate = (data) {
       try {

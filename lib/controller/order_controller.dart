@@ -27,7 +27,8 @@ class OrderController extends GetxController {
     print("====== Orders $orderStatus: $response");
     print(token);
     statusRequest = handlingData(response);
-    if (statusRequest == StatusRequest.seccuss) {
+    print("====== Orders $orderStatus: $statusRequest");
+
       if (response["status"] == "Success") {
         ordersByStatus[orderStatus] = response["data"];
         print("====== Orders $orderStatus: ${ordersByStatus[orderStatus]}");
@@ -36,7 +37,7 @@ class OrderController extends GetxController {
       } else {
         statusRequest = StatusRequest.failure;
       }
-    }
+
     update();
   }
 

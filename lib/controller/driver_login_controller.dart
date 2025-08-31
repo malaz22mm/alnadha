@@ -1,10 +1,9 @@
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../core/classes/stutusconntection.dart';
 import '../core/constant/routing.dart';
-import '../core/functions/handingdatacontroller.dart';
 import '../core/services/services.dart';
 import '../data/remote/auth/driver_login_data.dart';
 
@@ -13,7 +12,7 @@ class DriverLoginController extends GetxController {
   late TextEditingController password;
   bool showPass = true;
 
-  DriverLoginData loginData = DriverLoginData(Get.find()) ;
+  DriverLoginData loginData = DriverLoginData(Get.find());
   MyServices services = Get.find();
   StatusRequest statusRequest = StatusRequest.none;
 
@@ -45,14 +44,15 @@ class DriverLoginController extends GetxController {
       password: password.text,
     );
 
-    print("=============================== Driver Controller $response");
-    statusRequest = handlingData(response);
-    update();
+    print("================ Driver Login Response $response");
 
-    if (statusRequest == StatusRequest.seccuss) {
-      Map<String, dynamic> data = response['data'];
-      Map<String, dynamic> user = data['user'];
-      String token = data['token'];
+    // ✅ نفحص الرد القادم من الباك مباشرة
+    if (response["status"] == StatusRequest.success.name ||
+        response["status"] == "Success") {
+      statusRequest = StatusRequest.success;
+
+      Map<String, dynamic> user = response['data']['user'];
+      String token = response['data']['token'];
 
       services.pref.setString("driver_token", token);
       services.pref.setString("driver_name", user['FullName'] ?? "");
@@ -62,17 +62,23 @@ class DriverLoginController extends GetxController {
       services.pref.setString("driver_carnumber", user['CarNumber'].toString());
       services.pref.setString("driver_profilepic", user['ProfilePicture'] ?? "");
 
+      // ✅ عرض رسالة نجاح من الباك
+      Get.snackbar("نجاح", response["message"] ?? "تم تسجيل الدخول بنجاح",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white);
+
       Get.offAllNamed(AppRoute.driverorder);
-
-
-
-  } else if (response == StatusRequest.serverfailure) {
-      Get.defaultDialog(
-        title: "تحذير",
-        middleText: "حدث خطأ في تسجيل الدخول كسفير",
-      );
+    } else {
       statusRequest = StatusRequest.failure;
-      update();
+
+      // ✅ عرض رسالة خطأ من الباك
+      Get.snackbar("خطأ", response["message"] ?? "فشل تسجيل الدخول",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white);
     }
+
+    update();
   }
 }

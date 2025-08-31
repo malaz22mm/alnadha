@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../../../controller/driver_edit_profile_controller.dart';
 import '../../../controller/driver_order_controller.dart';
 import '../../../core/classes/stutusconntection.dart';
@@ -17,6 +17,14 @@ class DriverHome extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final profileController = Get.put(ProfileController());
   MyServices services = Get.find();
+
+  Future<void> _openTelegramGroup() async {
+    final Uri url = Uri.parse("https://t.me/+5p2i8rBrfLBiMzA0");
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +111,14 @@ class DriverHome extends StatelessWidget {
 
 
                       },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.telegram, color: Colors.blue),
+                      title: const Text(
+                        "غروب التيلغرام",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      onTap: _openTelegramGroup,
                     ),
 
                     ListTile(

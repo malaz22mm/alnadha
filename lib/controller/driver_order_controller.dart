@@ -28,14 +28,16 @@ class DriverOrdersController extends GetxController {
 
     var response = await ordersData.getOrders(token: token);
 
-    statusRequest = handlingData(response);
-    if (statusRequest == StatusRequest.seccuss) {
-      orders = response['data'];
+    if (response["status"] == "Success" && response["data"] != null) {
+      statusRequest = StatusRequest.success;
+      orders = response['data'] as List;
       print("Orders from API: $orders");
     } else {
+      statusRequest = StatusRequest.failure;
       orders = [];
     }
     update();
+
   }
   Future<void> acceptOrder(int orderId) async {
     statusRequest = StatusRequest.loading;
@@ -49,19 +51,17 @@ class DriverOrdersController extends GetxController {
     }
 
     var response = await ordersData.acceptOrder(orderId: orderId, token: token);
+    print("Response from API: $response");
 
-    statusRequest = handlingData(response);
-    if (statusRequest == StatusRequest.seccuss) {
-      if (response['status'] == "Success") {
+    if (response["status"] == "Success") {
+
         Get.snackbar("نجاح", "تم قبول الطلب بنجاح");
         getOrders();
         Get.toNamed(AppRoute.drivermap, arguments: {'orderId': orderId});
-      } else {
+    }
+       else {
         Get.snackbar("خطأ", "فشل في قبول الطلب");
       }
-    } else {
-      Get.snackbar("خطأ", "حدث خطأ أثناء الاتصال بالخادم");
-    }
 
     update();
   }
@@ -79,9 +79,8 @@ class DriverOrdersController extends GetxController {
 
     var response = await ordersData.rejectOrder(orderId: orderId, token: token);
 
-    statusRequest = handlingData(response);
-    if (statusRequest == StatusRequest.seccuss) {
-      if (response['status'] == "Success") {
+    if (response.isNotEmpty) {
+
         Get.snackbar("نجاح", "تم إلغاء الطلب بنجاح");
         // حذف الطلب من القائمة الحالية بدون إعادة تحميل API
         orders.removeWhere((order) => order['OrderID'] == orderId);
@@ -89,9 +88,7 @@ class DriverOrdersController extends GetxController {
       } else {
         Get.snackbar("خطأ", "فشل في إلغاء الطلب");
       }
-    } else {
-      Get.snackbar("خطأ", "حدث خطأ أثناء الاتصال بالخادم");
-    }
+
 
     update();
   }

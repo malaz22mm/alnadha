@@ -8,15 +8,16 @@ import '../../controller/tracking_controller.dart';
 class TrackingView extends StatelessWidget {
   final String orderId;
   final String authUrl;
+  final LatLng? initialOrderLocation;
 
-  TrackingView({super.key, required this.orderId, required this.authUrl});
+  TrackingView({super.key, required this.orderId, required this.authUrl,  this.initialOrderLocation});
 
   final TrackingController controller = Get.put(TrackingController());
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.startTracking(orderId, authUrl);
+      controller.startTracking(orderId, authUrl, initialLocation: initialOrderLocation);
     });
 
     return Scaffold(
@@ -42,7 +43,7 @@ class TrackingView extends StatelessWidget {
         }
 
         final driverLoc = controller.driverLocation.value;
-        final initialLocation = driverLoc ?? const LatLng(24.7136, 46.6753); // الريال كموقع افتراضي
+        final initialLocation = driverLoc ?? initialOrderLocation??LatLng(30.0444, 31.2357);
 
         return FlutterMap(
           options: MapOptions(

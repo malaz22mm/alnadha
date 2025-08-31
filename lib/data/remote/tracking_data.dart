@@ -31,7 +31,7 @@ class TrackingData {
         onEvent: onPusherEvent,
       );
 
-      await pusher.subscribe(channelName: "private-order.$orderId");
+      await pusher.subscribe(channelName: "order.$orderId");
       await pusher.connect();
 
     } catch (e) {
@@ -40,7 +40,9 @@ class TrackingData {
   }
 
   void onPusherEvent(PusherEvent event) {
-    // أضف هذه السطور للتحقق من استقبال الأحداث
+    print("📡 Received Event: ${event.eventName}");
+    print("📦 Raw Data: ${event.data}");
+
     print("=== 🔵 PUSHER EVENT RECEIVED ===");
     print("📡 Channel: ${event.channelName}");
     print("🎯 Event Name: ${event.eventName}");

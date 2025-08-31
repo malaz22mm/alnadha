@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:alnadha/veiw/screen/edit_profile.dart';
 import 'package:alnadha/veiw/screen/show_order.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constant/colors.dart';
 import '../../core/constant/routing.dart';
@@ -25,7 +26,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     final MyServices myServices = Get.find();
 
-    // قراءة التوكين: أولًا من arguments، إذا null خذ من SharedPreferences
     token = Get.arguments != null && Get.arguments['token'] != null
         ? Get.arguments['token']
         : myServices.pref.getString("token") ?? '';
@@ -116,6 +116,19 @@ class MainContent extends StatelessWidget {
             buttonText: "تتبع الآن",
             onPressed: () => Get.toNamed("/orderpage", arguments: {'token': token}),
           ),
+          const SizedBox(height: 20),
+
+          // ✅ كرت الانضمام لغروب التيلغرام
+          buildCard(
+            title: "انضم إلى مجتمعنا",
+            description: "كن على اطلاع بآخر الأخبار والعروض عبر غروب التيلغرام",
+            imagePath: "assets/images/telegram.png",
+            buttonText: "انضم الآن",
+            onPressed: () {
+
+              launchUrl(Uri.parse("https://t.me/+5p2i8rBrfLBiMzA0"), mode: LaunchMode.externalApplication);
+            },
+          ),
         ],
       ),
     );
@@ -160,8 +173,8 @@ class MainContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               child: Image.asset(
                 imagePath,
-                width: 100,
-                height: 100,
+                width: 70,
+                height: 70,
                 fit: BoxFit.cover,
               ),
             )
@@ -172,6 +185,5 @@ class MainContent extends StatelessWidget {
   }
 }
 
-// صفحات أخرى بسيطة
 
 

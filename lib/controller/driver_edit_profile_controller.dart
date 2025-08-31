@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import '../core/services/services.dart';
 import '../data/remote/driver_edit_profile_data.dart';
 import '../../../core/classes/stutusconntection.dart';
-import '../../../core/functions/handingdatacontroller.dart';
 
 class ProfileController extends GetxController {
   final myServices = Get.find<MyServices>();
@@ -15,6 +14,9 @@ class ProfileController extends GetxController {
   var profileData = {}.obs;
 
   late String token;
+  final carNumberController = TextEditingController();
+  final carTypeController = TextEditingController();
+
   final fullNameController = TextEditingController();
   final phoneController = TextEditingController();
   File? profileImage;
@@ -37,24 +39,27 @@ class ProfileController extends GetxController {
     try {
       isLoading.value = true;
 
-      StatusRequest statusRequest = StatusRequest.loading;
       var response = await profileDataSource.getProfile(token: token);
+      print("PROFILE DATA RESPONSE: $response");
 
-      statusRequest = handlingData(response);
-      if (statusRequest == StatusRequest.seccuss) {
-        profileData.value = response;
-        fullNameController.text = profileData["FullName"] ?? '';
-        phoneController.text = profileData['Phone'] ?? '';
+      // البيانات الحقيقية داخل المفتاح "data"
+      final data = response['data'] ?? {};
 
-        // بدل استخدام imagePath من JSON
-        await fetchProfilePicture();
-      } else {
-        Get.snackbar("Error", "Failed to load profile");
-      }
+      profileData.value = data;
+
+      fullNameController.text = data["FullName"] ?? '';
+      phoneController.text = data['Phone'] ?? '';
+      carNumberController.text = data['CarNumber']?.toString() ?? '';
+      carTypeController.text = data['CarType']?.toString() ?? '';
+
+
+      // تحميل الصورة من السيرفر
+      await fetchProfilePicture();
     } finally {
       isLoading.value = false;
     }
   }
+
 
 // ما نرسل imagePath هنا، نستخدم endpoint الثابت
   Future<void> fetchProfilePicture() async {
@@ -81,12 +86,15 @@ class ProfileController extends GetxController {
         token: token,
         fullName: fullNameController.text,
         phone: phoneController.text,
+        carNumber: carNumberController.text,
+        carType: carTypeController.text,
       );
+
 
       response.fold(
             (failure) {
           // هنا نعرض الخطأ بناءً على نوع الفشل
-          if (failure == StatusRequest.offlinefailure) {
+          if (failure == StatusRequest.offlineFailure) {
             Get.snackbar("Error", "No internet connection");
           } else {
             Get.snackbar("Error", "Failed to update profile");

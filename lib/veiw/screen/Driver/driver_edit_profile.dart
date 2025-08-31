@@ -153,7 +153,42 @@ class _EditProfilePageState extends State<DriverEditProfilePage> {
                     label: 'Phone',
                     icon: Icons.phone,
                   ),
+                  const SizedBox(height: 16),
+                  _buildTextField(
+                    controller: profileController.carNumberController,
+                    label: 'Car Number',
+                    icon: Icons.confirmation_number,
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: profileController.carTypeController.text.isNotEmpty
+                        ? profileController.carTypeController.text
+                        : null,
+                    decoration: InputDecoration(
+                      hintText: "Car Type",
+                      prefixIcon: const Icon(Icons.directions_car),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    items: const [
+                      DropdownMenuItem(value: "car", child: Text("Car")),
+                      DropdownMenuItem(value: "truck", child: Text("Truck")),
+                      DropdownMenuItem(value: "motorcycle", child: Text("Motorcycle")),
+                      DropdownMenuItem(value: "bicycle", child: Text("Bicycle")),
+                    ],
+                    onChanged: (value) {
+                      profileController.carTypeController.text = value ?? '';
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please select a vehicle type";
+                      }
+                      return null;
+                    },
+                  ),
                   const SizedBox(height: 60),
+
                   ElevatedButton(
                     onPressed: _onSave,
                     style: ElevatedButton.styleFrom(

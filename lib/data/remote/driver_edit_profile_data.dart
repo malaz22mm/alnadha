@@ -67,10 +67,14 @@ print(response);
     required String token,
     required String fullName,
     required String phone,
+    required String carNumber,
+    required String carType,
   }) async {
     final data = {
       "full_name": fullName,
       "phone": phone,
+      "driver_carnumber": carNumber,
+      "driver_cartype": carType,
     };
 
     return await crud.putData(

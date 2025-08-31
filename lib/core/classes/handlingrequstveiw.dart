@@ -16,11 +16,11 @@ class HandlingDataView extends StatelessWidget {
     return statusRequest == StatusRequest.loading
         ? const Center(
         child:  CircularProgressIndicator(color:AppColors.primarycolor,))
-        : statusRequest == StatusRequest.offlinefailure
+        : statusRequest == StatusRequest.offlineFailure
         ? const Center(
         child:CircularProgressIndicator(color: AppColors.primarycolor,) ,
             )
-        : statusRequest == StatusRequest.serverfailure
+        : statusRequest == StatusRequest.serverFailure
         ?const  Center(
         //child: Lottie.asset(AppImage.falureimage,
            // width: 250, height: 250)
@@ -46,11 +46,11 @@ class HandlingDataRequest extends StatelessWidget {
     return statusRequest == StatusRequest.loading
         ? Center(
         child:CircularProgressIndicator())
-        : statusRequest == StatusRequest.offlinefailure
+        : statusRequest == StatusRequest.offlineFailure
         ? Center(
         child: Lottie.asset(AppImage.offlineimage,
             width: 250, height: 250))
-        : statusRequest == StatusRequest.serverfailure
+        : statusRequest == StatusRequest.serverFailure
         ? Center(
         child: Lottie.asset(AppImage.serverfalureimage,
             width: 250, height: 250))

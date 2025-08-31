@@ -51,7 +51,7 @@ class Routers {
     GetPage(name: AppRoute.driververifycodeforgetpasswors, page: ()=>const DriverVerifycodeForgetPassword()),
     GetPage(name: AppRoute.driverresetpassword, page: ()=>const DriverResetPasswordScreen()),
     GetPage(name: AppRoute.tracking, page: ()=> TrackingView(  orderId: Get.arguments['orderId'],
-      authUrl: Get.arguments['authUrl'],))
+      authUrl: Get.arguments['authUrl'],initialOrderLocation: Get.arguments['initialOrderLocation'],))
       // GetPage(name: '/', page: ()=>const HomePage())
   ];
 }
