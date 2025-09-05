@@ -32,6 +32,7 @@ static const String order='/orderpage';
 static const String driverorder='/driverHome';
 static const String createorder='/createorder';
 static const String editorder='/editorder';
+static const String driveracceptedorders='/driveracceptedorders';
 
 static const String drivereditprofile='/driveredit';
 static const String editprofile='/editprofile';

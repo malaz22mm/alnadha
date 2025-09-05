@@ -31,6 +31,11 @@ class TrackingController extends GetxController {
 
     service.onLocationUpdate = (data) {
       try {
+        if (data['status'] == 'subscribed') {
+          isLoading.value = false; // ✅ توقف الـ loading
+          return;
+        }
+
         final lat = double.tryParse(data['lat']?.toString() ?? '');
         final lng = double.tryParse(data['lng']?.toString() ?? '');
 
@@ -43,6 +48,7 @@ class TrackingController extends GetxController {
         isLoading.value = false;
       }
     };
+
 
     service.initPusher(orderId, authUrl).catchError((error) {
       errorMessage.value = 'Tracking error: $error';

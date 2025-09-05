@@ -12,18 +12,18 @@ import '../../widget/buildinforow.dart';
 import '../../widget/custom_text.dart';
 
 class DriverHome extends StatelessWidget {
-  DriverHome({super.key});
-  final DriverOrdersController controller = Get.put(DriverOrdersController());
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final profileController = Get.put(ProfileController());
-  MyServices services = Get.find();
+    DriverHome({super.key});
+    final DriverOrdersController controller = Get.put(DriverOrdersController());
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+    final profileController = Get.put(ProfileController());
+    MyServices services = Get.find();
 
-  Future<void> _openTelegramGroup() async {
-    final Uri url = Uri.parse("https://t.me/+5p2i8rBrfLBiMzA0");
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      throw Exception('Could not launch $url');
+    Future<void> _openTelegramGroup() async {
+      final Uri url = Uri.parse("https://t.me/+5p2i8rBrfLBiMzA0");
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        throw Exception('Could not launch $url');
+      }
     }
-  }
 
 
   @override
@@ -119,6 +119,16 @@ class DriverHome extends StatelessWidget {
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                       ),
                       onTap: _openTelegramGroup,
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.check, color: Colors.green),
+                      title: const Text(
+                        "الطلبات المقبولة",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      onTap: (){
+                        Get.toNamed(AppRoute.driveracceptedorders);
+                      },
                     ),
 
                     ListTile(
@@ -247,8 +257,8 @@ class DriverHome extends StatelessWidget {
                                         Icons.person,
                                         order['user']?['fullName'] ??
                                             ''),
-                                    buildInfoRow(Icons.monetization_on,
-                                        order['user']?['phone'] ?? ''),
+                                    buildInfoRow(Icons.monetization_on, order['Cost']?.toString() ?? ''),
+                                    buildInfoRow(Icons.date_range, order['created_at'] ?? ''),
                                     Row(
                                       children: [
                                         InkWell(

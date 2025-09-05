@@ -24,6 +24,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   final TextEditingController _deliveryLatController = TextEditingController();
   final TextEditingController _deliveryLngController = TextEditingController();
 
+
   String? _selectedVehicle;
   String? _selectedStatus = "pending";
 
@@ -86,9 +87,16 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                         border: OutlineInputBorder(),
                       ),
                       maxLines: 3,
-                      validator: (val) =>
-                      val == null || val.isEmpty ? "الوصف مطلوب" : null,
+                      validator: (val) {
+                        if (val == null || val.isEmpty) {
+                          return "الوصف مطلوب";
+                        } else if (val.length < 9) {
+                          return "الوصف يجب أن يكون 9 أحرف على الأقل";
+                        }
+                        return null; // صالح
+                      },
                     ),
+
                     const SizedBox(height: 16),
 
                     ClipRRect(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../data/remote/edit_order_data.dart';
+import 'package:latlong2/latlong.dart';
 
 class EditOrderController extends GetxController {
   final EditOrderData data;
@@ -10,15 +11,25 @@ class EditOrderController extends GetxController {
 
   late TextEditingController descriptionController;
   String? selectedVehicle;
-
   var isLoading = false.obs;
+
+  // استخدم RxString للملاحظة
+  var pickupLat = ''.obs;
+  var pickupLng = ''.obs;
+  var deliveryLat = ''.obs;
+  var deliveryLng = ''.obs;
 
   @override
   void onInit() {
     selectedVehicle = order['VehicleTypes'];
     descriptionController = TextEditingController(text: order['Description']);
+    pickupLat.value = order['PickupLatitude']?.toString() ?? '';
+    pickupLng.value = order['PickupLongitude']?.toString() ?? '';
+    deliveryLat.value = order['DeliveryLatitude']?.toString() ?? '';
+    deliveryLng.value = order['DeliveryLongitude']?.toString() ?? '';
     super.onInit();
   }
+
   Future<void> saveOrder() async {
     if (selectedVehicle == null || descriptionController.text.isEmpty) {
       Get.snackbar("تنبيه", "الرجاء تعبئة جميع الحقول");
@@ -31,6 +42,10 @@ class EditOrderController extends GetxController {
         orderId: order['OrderID'],
         vehicleType: selectedVehicle!,
         description: descriptionController.text,
+        pickupLatitude: pickupLat.value,
+        pickupLongitude: pickupLng.value,
+        deliveryLatitude: deliveryLat.value,
+        deliveryLongitude: deliveryLng.value,
       );
 
       isLoading.value = false;
@@ -47,6 +62,7 @@ class EditOrderController extends GetxController {
       Get.snackbar("خطأ", "حدث خطأ أثناء الاتصال بالخادم: $e");
     }
   }
+
   Future<void> deleteOrder() async {
     isLoading.value = true;
     try {
@@ -65,5 +81,4 @@ class EditOrderController extends GetxController {
       Get.snackbar("خطأ", "حدث خطأ أثناء الاتصال بالخادم: $e");
     }
   }
-
 }

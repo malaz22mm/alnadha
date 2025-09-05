@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:alnadha/core/constant/routing.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
@@ -12,27 +11,28 @@ class DriverTrackingController extends GetxController {
   final DriverLocationData locationData = DriverLocationData(Get.find());
   final MyServices services = Get.find();
 
-  LatLng driverLocation = const LatLng(33.5090, 36.3000);
-  LatLng pickupLocation = const LatLng(0, 0);
-  LatLng deliveryLocation = const LatLng(0, 0);
+  var driverLocation = LatLng(33.5090, 36.3000).obs;
+  var pickupLocation = LatLng(0,0).obs;
+  var deliveryLocation = LatLng(0,0).obs;
 
+  var hasPickupDelivery = false.obs;
   StatusRequest statusRequest = StatusRequest.none;
-  late StreamSubscription<Position> positionStream;
 
-  int orderId = 0;
-  bool hasPickupDelivery = false;
+  late StreamSubscription<Position> positionStream;
+  var orderId = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
     _checkLocationPermission();
   }
+
   Future<void> confirmDelivery() async {
     String? token = services.pref.getString("driver_token");
     if (token == null) return;
 
     var response = await locationData.completeOrder(
-      orderId: orderId,
+      orderId: orderId.value,
       token: token,
     );
 
@@ -44,7 +44,8 @@ class DriverTrackingController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-      Get.toNamed(AppRoute.driverorder);
+      services.pref.remove("active_order_id");
+      Get.toNamed("/driverorder");
     } else {
       Get.snackbar(
         "خطأ",
@@ -66,14 +67,10 @@ class DriverTrackingController extends GetxController {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return;
-      }
+      if (permission == LocationPermission.denied) return;
     }
 
-    if (permission == LocationPermission.deniedForever) {
-      return;
-    }
+    if (permission == LocationPermission.deniedForever) return;
 
     startUpdatingLocation();
   }
@@ -81,44 +78,37 @@ class DriverTrackingController extends GetxController {
   void startUpdatingLocation() {
     positionStream = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 5,
+        accuracy: LocationAccuracy.bestForNavigation,
+        distanceFilter: 1,
       ),
     ).listen((Position position) async {
-      print("📍 الموقع الجديد: ${position.latitude}, ${position.longitude}");
-      driverLocation = LatLng(position.latitude, position.longitude);
-      update();
+      driverLocation.value = LatLng(position.latitude, position.longitude);
       await sendDriverLocation();
     });
   }
 
-
   Future<void> sendDriverLocation() async {
     String? token = services.pref.getString("driver_token");
+    print("token: $token");
     if (token == null) return;
 
     var response = await locationData.updateDriverLocation(
-      orderId: orderId,
-      latitude: driverLocation.latitude,
-      longitude: driverLocation.longitude,
+      orderId: orderId.value,
+      latitude: driverLocation.value.latitude,
+      longitude: driverLocation.value.longitude,
       token: token,
     );
-    print("📡 API response: $response");
 
-    if (response["status"] == "Success") {
-      // نجلب مواقع pickup و delivery أول مرة فقط
-      if (!hasPickupDelivery && response["data"] != null) {
-        pickupLocation = LatLng(
-          double.parse(response["data"]["pickup_latitude"]),
-          double.parse(response["data"]["pickup_longitude"]),
-        );
-        deliveryLocation = LatLng(
-          double.parse(response["data"]["delivery_latitude"]),
-          double.parse(response["data"]["delivery_longitude"]),
-        );
-        hasPickupDelivery = true;
-        update();
-      }
+    if (response["status"] == "Success" && !hasPickupDelivery.value && response["data"] != null) {
+      pickupLocation.value = LatLng(
+        double.parse(response["data"]["pickup_latitude"]),
+        double.parse(response["data"]["pickup_longitude"]),
+      );
+      deliveryLocation.value = LatLng(
+        double.parse(response["data"]["delivery_latitude"]),
+        double.parse(response["data"]["delivery_longitude"]),
+      );
+      hasPickupDelivery.value = true;
     }
   }
 

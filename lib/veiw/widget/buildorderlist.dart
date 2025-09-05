@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core/constant/colors.dart';
 import '../../core/constant/staticdata.dart';
+import '../../core/services/services.dart';
 import '../screen/edit_order_page.dart';
 
 Widget buildOrderList(String status, List<Map<String, dynamic>> allOrders) {
 
   final filteredOrders = allOrders;
 
+  MyServices services = Get.find();
 
 
   if (filteredOrders.isEmpty) {
@@ -82,12 +84,11 @@ Widget buildOrderList(String status, List<Map<String, dynamic>> allOrders) {
                             IconButton(
                               icon:  Icon(Icons.location_on, color: Colors.blue),
                               onPressed: () {
-                                final staticData = StaticData();
                                 Get.toNamed(
                                   '/tracking',
                                   arguments: {
-                                    'orderId': order['OrderID'].toString(),
-                                    'authUrl': '${staticData.baseurl}broadcasting/auth',
+                                    'orderId': order['OrderID'],
+                                    'authToken':services.pref.getString('token') ,
                                   },
                                 );
                               },

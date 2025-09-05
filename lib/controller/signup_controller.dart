@@ -66,9 +66,7 @@ class SignupController extends GetxController {
     );
 
     print("================ Signup Response $response");
-
-    // ✅ تحقق من حالة الريسبونس
-    if (response.isNotEmpty&& response['status'=='Success']) {
+    if (response.isNotEmpty && response['status'] == 'Success') {
       statusRequest = StatusRequest.success;
 
       String token = response['data']['token'];
@@ -88,6 +86,7 @@ class SignupController extends GetxController {
           backgroundColor: Colors.red,
           colorText: Colors.white);
     }
+
 
     update();
   }

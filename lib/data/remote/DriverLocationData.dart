@@ -2,28 +2,25 @@ import '../../../core/classes/crud.dart';
 import '../../../core/constant/staticdata.dart';
 
 class DriverLocationData {
-  Crud crud;
+  final Crud crud;
   DriverLocationData(this.crud);
+
   Future<Map<String, dynamic>> completeOrder({
     required int orderId,
     required String token,
   }) async {
     var response = await crud.postData(
       linkurl: "${StaticData().baseurl}driver/completeOrder/$orderId",
-      data: {}, // ما في بيانات بالجسم
+      data: {},
       token: token,
     );
 
-    final result = response.fold(
-          (l) => {
-        'status': 'error',
-        'message': l.toString(),
-      },
-          (r) => r,
+    final result = response.fold<Map<String, dynamic>>(
+          (l) => {'status': 'error', 'message': l.toString()},
+          (r) => Map<String, dynamic>.from(r as Map),
     );
 
-    if (result is Map) return Map<String, dynamic>.from(result);
-    return {'status': 'error', 'message': 'unexpected response type'};
+    return result;
   }
 
   Future<Map<String, dynamic>> updateDriverLocation({
@@ -43,14 +40,10 @@ class DriverLocationData {
     );
 
     final result = response.fold(
-          (l) => {
-        'status': 'error',
-        'message': l.toString(),
-      },
+          (l) => {'status': 'error', 'message': l.toString()},
           (r) => r,
     );
 
-    // تأكد أن ما نُعيد هو Map<String,dynamic>
     if (result is Map) return Map<String, dynamic>.from(result);
     return {'status': 'error', 'message': 'unexpected response type'};
   }

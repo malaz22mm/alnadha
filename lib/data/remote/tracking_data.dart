@@ -40,17 +40,29 @@ class TrackingData {
   }
 
   void onPusherEvent(PusherEvent event) {
-    print("📡 Received Event: ${event.eventName}");
-    print("📦 Raw Data: ${event.data}");
+    // print("📡 Received Event: ${event.eventName}");
+    // print("📦 Raw Data: ${event.data}");
+    //
+    // print("=== 🔵 PUSHER EVENT RECEIVED ===");
+    // print("📡 Channel: ${event.channelName}");
+    // print("🎯 Event Name: ${event.eventName}");
+    // print("📦 Raw Data: ${event.data}");
+    // print("👤 User ID: ${event.userId}");
+    // print("=================================");
+    print("📡 EVENT RECEIVED");
+    print("➡️ Channel: ${event.channelName}");
+    print("➡️ Event: ${event.eventName}");
+    print("➡️ Data: ${event.data}");
 
-    print("=== 🔵 PUSHER EVENT RECEIVED ===");
-    print("📡 Channel: ${event.channelName}");
-    print("🎯 Event Name: ${event.eventName}");
-    print("📦 Raw Data: ${event.data}");
-    print("👤 User ID: ${event.userId}");
-    print("=================================");
-
-    if (event.eventName == "location-updated") {
+    if (onLocationUpdate != null) {
+      try {
+        final decoded = jsonDecode(event.data);
+        print("✅ Decoded: $decoded");
+      } catch (e) {
+        print("❌ JSON Decode Error: $e");
+      }
+    }
+    if (event.eventName == "driver-location-updated") {
       try {
         print("📍 Location update event detected!");
         final data = jsonDecode(event.data);
@@ -74,7 +86,16 @@ class TrackingData {
       }
     } else if (event.eventName == "pusher:subscription_succeeded") {
       print("🎉 Successfully subscribed to channel!");
-    } else if (event.eventName == "pusher:ping") {
+      // 🔥 إيقاف الـ loading بعد نجاح الاشتراك
+      if (onLocationUpdate != null) {
+        onLocationUpdate!({
+          'lat': null,
+          'lng': null,
+          'status': 'subscribed',
+        });
+      }
+    }
+    else if (event.eventName == "pusher:ping") {
       print("💓 Pusher heartbeat ping");
     } else {
       print("ℹ️ Other event type received");
@@ -99,6 +120,8 @@ class TrackingData {
       );
 
       if (response.statusCode == 200) {
+        print("=============================");
+        print(response);
         return jsonDecode(response.body);
       } else {
         throw Exception('Auth failed: ${response.statusCode}');
@@ -111,7 +134,7 @@ class TrackingData {
 
   Future<void> disconnect() async {
     try {
-      await pusher.unsubscribe(channelName: "private-order.$_orderId");
+      await pusher.unsubscribe(channelName: "order.$_orderId");
       await pusher.disconnect();
     } catch (e) {
       print("Disconnect Error: $e");

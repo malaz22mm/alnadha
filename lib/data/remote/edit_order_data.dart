@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
 import '../../core/constant/staticdata.dart';
 
 class EditOrderData {
@@ -13,6 +12,10 @@ class EditOrderData {
     required int orderId,
     required String vehicleType,
     required String description,
+    required String pickupLatitude,
+    required String pickupLongitude,
+    required String deliveryLatitude,
+    required String deliveryLongitude,
   }) async {
     final url = "$baseUrl/$orderId";
     print("PUT Request URL: $url");
@@ -26,6 +29,10 @@ class EditOrderData {
       body: jsonEncode({
         "vehicle_types": vehicleType,
         "description": description,
+        "pickup_latitude": pickupLatitude,
+        "pickup_longitude": pickupLongitude,
+        "delivery_latitude": deliveryLatitude,
+        "delivery_longitude": deliveryLongitude,
       }),
     );
 

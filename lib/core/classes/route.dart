@@ -9,6 +9,7 @@ import 'package:alnadha/veiw/screen/Driver/driver.dart';
 import 'package:alnadha/veiw/screen/map.dart';
 import 'package:alnadha/veiw/screen/onbordring_view.dart';
 import 'package:alnadha/veiw/screen/show_order.dart' ;
+import '../../veiw/screen/Driver/accept_order.dart';
 import '../../veiw/screen/Driver/driver_edit_profile.dart';
 import '../../veiw/screen/Driver/driverforgetpassword/forgetpassword.dart';
 import '../../veiw/screen/Driver/driverforgetpassword/resetpassword.dart';
@@ -50,8 +51,8 @@ class Routers {
     GetPage(name: AppRoute.driverforgetpassword, page: ()=>const DriverForgetPassword()),
     GetPage(name: AppRoute.driververifycodeforgetpasswors, page: ()=>const DriverVerifycodeForgetPassword()),
     GetPage(name: AppRoute.driverresetpassword, page: ()=>const DriverResetPasswordScreen()),
-    GetPage(name: AppRoute.tracking, page: ()=> TrackingView(  orderId: Get.arguments['orderId'],
-      authUrl: Get.arguments['authUrl'],initialOrderLocation: Get.arguments['initialOrderLocation'],))
+   GetPage(name: AppRoute.driveracceptedorders, page: ()=> DriverAcceptedOrdersView()),
+    GetPage(name: AppRoute.tracking, page: ()=> TrackingView(  orderId: Get.arguments['orderId'], authToken: Get.arguments['authToken'],))
       // GetPage(name: '/', page: ()=>const HomePage())
   ];
 }
