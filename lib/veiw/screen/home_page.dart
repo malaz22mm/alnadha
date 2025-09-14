@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:alnadha/veiw/screen/edit_profile.dart';
 import 'package:alnadha/veiw/screen/show_order.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../../core/constant/colors.dart';
 import '../../core/constant/routing.dart';
 import '../../core/services/services.dart';
@@ -17,7 +18,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentIndex = 0;
-
 
   late String token;
 
@@ -35,10 +35,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages =  [
-      MainContent(token:token),      // الصفحة الرئيسية
-      OrdersPage(),       // تتبع الطلب
-      EditProfilePage(),     // الإعدادات
+    final List<Widget> pages = [
+      MainContent(token: token), // الصفحة الرئيسية
+      OrdersPage(), // تتبع الطلب
+      EditProfilePage(), // الإعدادات
     ];
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -47,7 +47,10 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: const Text("مرحباً بك", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          title: const Text(
+            "مرحباً بك",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
           centerTitle: true,
         ),
         body: pages[currentIndex],
@@ -57,10 +60,7 @@ class _HomePageState extends State<HomePage> {
           selectedItemColor: AppColors.darkbluecolor,
           unselectedItemColor: Colors.grey,
           items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'الرئيسية',
-            ),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
             BottomNavigationBarItem(
               icon: Icon(Icons.local_shipping),
               label: 'تتبع الطلب',
@@ -101,9 +101,8 @@ class MainContent extends StatelessWidget {
             description: "أرسل هدية أو مستند بسرعة بخطوات بسيطة",
             imagePath: "assets/images/photo_2025-07-17_00-09-43 (2).jpg",
             buttonText: "ابدأ الآن",
-            onPressed: () => Get.toNamed(AppRoute.createorder,arguments: {
-              'token': token,
-            }),
+            onPressed: () =>
+                Get.toNamed(AppRoute.createorder, arguments: {'token': token}),
           ),
 
           const SizedBox(height: 20),
@@ -114,7 +113,8 @@ class MainContent extends StatelessWidget {
             description: "تابع حالة طلباتك الحالية مباشرة من هنا",
             imagePath: "assets/images/photo_2025-07-17_00-09-42.jpg",
             buttonText: "تتبع الآن",
-            onPressed: () => Get.toNamed("/orderpage", arguments: {'token': token}),
+            onPressed: () =>
+                Get.toNamed("/orderpage", arguments: {'token': token}),
           ),
           const SizedBox(height: 20),
 
@@ -124,9 +124,37 @@ class MainContent extends StatelessWidget {
             description: "كن على اطلاع بآخر الأخبار والعروض عبر غروب التيلغرام",
             imagePath: "assets/images/telegram.png",
             buttonText: "انضم الآن",
-            onPressed: () {
+            onPressed: () async {
+              final url = Uri.parse(
+                "https://mzmzmz.app.n8n.cloud/webhook/get-stats",
+              );
 
-              launchUrl(Uri.parse("https://t.me/+5p2i8rBrfLBiMzA0"), mode: LaunchMode.externalApplication);
+              try {
+                final response = await http.post(
+                  url,
+                  headers: {"Content-Type": "application/json"},
+                  body: jsonEncode({
+                    "token": token,
+                    "type": "customer",
+                  }),
+                );
+
+                if (response.statusCode == 200) {
+                  print("📩 تم إرسال التوكن إلى n8n بنجاح");
+                  // بعد النجاح افتح غروب التيلغرام
+                  launchUrl(
+                    Uri.parse("https://t.me/+5p2i8rBrfLBiMzA0"),
+                    mode: LaunchMode.externalApplication,
+                  );
+                } else {
+                  print("❌ فشل إرسال التوكن: ${response.body}");
+                  Get.snackbar("خطأ", "لم يتم الانضمام للمجموعة، حاول مجددًا");
+                }
+              } catch (e) {
+                print("⚠️ Exception: $e");
+                Get.snackbar("مشكلة", "تعذر الاتصال بالخادم");
+              }
+              // launchUrl(Uri.parse("https://t.me/+5p2i8rBrfLBiMzA0"), mode: LaunchMode.externalApplication);
             },
           ),
         ],
@@ -142,7 +170,7 @@ class MainContent extends StatelessWidget {
     required VoidCallback onPressed,
   }) {
     return Card(
-      color:  AppColors.gray,
+      color: AppColors.gray,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
       child: Padding(
@@ -153,7 +181,13 @@ class MainContent extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   Text(description, style: const TextStyle(fontSize: 16)),
                   const SizedBox(height: 14),
@@ -161,9 +195,18 @@ class MainContent extends StatelessWidget {
                     onPressed: onPressed,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.darkbluecolor,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                    child: Text(buttonText, style: const TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold)),
+                    child: Text(
+                      buttonText,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -177,13 +220,10 @@ class MainContent extends StatelessWidget {
                 height: 70,
                 fit: BoxFit.cover,
               ),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-
-

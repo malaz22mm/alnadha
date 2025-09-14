@@ -10,7 +10,8 @@ import '../../../core/constant/routing.dart';
 import '../../../core/services/services.dart';
 import '../../widget/buildinforow.dart';
 import '../../widget/custom_text.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 class DriverHome extends StatelessWidget {
     DriverHome({super.key});
     final DriverOrdersController controller = Get.put(DriverOrdersController());
@@ -18,12 +19,7 @@ class DriverHome extends StatelessWidget {
     final profileController = Get.put(ProfileController());
     MyServices services = Get.find();
 
-    Future<void> _openTelegramGroup() async {
-      final Uri url = Uri.parse("https://t.me/+5p2i8rBrfLBiMzA0");
-      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-        throw Exception('Could not launch $url');
-      }
-    }
+
 
 
   @override
@@ -31,6 +27,44 @@ class DriverHome extends StatelessWidget {
     String? token = services.pref.getString("driver_token");
     String? name = services.pref.getString("driver_name");
     int? id = services.pref.getInt("driver_id");
+
+    Future<void> _openTelegramGroup() async {
+      // final Uri url = Uri.parse("https://t.me/+5p2i8rBrfLBiMzA0");
+      // if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      //   throw Exception('Could not launch $url');
+      // }
+      final url = Uri.parse(
+        "https://mzmzmz.app.n8n.cloud/webhook/get-stats",
+      );
+
+      try {
+        final response = await http.post(
+          url,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({
+            "token": token,
+            "type": "driver",
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          print("📩 تم إرسال التوكن إلى n8n بنجاح");
+          // بعد النجاح افتح غروب التيلغرام
+          launchUrl(
+            Uri.parse("https://t.me/+5p2i8rBrfLBiMzA0"),
+            mode: LaunchMode.externalApplication,
+          );
+        } else {
+          print("❌ فشل إرسال التوكن: ${response.body}");
+          Get.snackbar("خطأ", "لم يتم الانضمام للمجموعة، حاول مجددًا");
+        }
+      } catch (e) {
+        print("⚠️ Exception: $e");
+        Get.snackbar("مشكلة", "تعذر الاتصال بالخادم");
+      }
+
+    }
+
 
     return SafeArea(
       child: Scaffold(
